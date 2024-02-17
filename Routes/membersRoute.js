@@ -4,19 +4,21 @@ const Member = require("../Models/membershipModel");
 const isAuthenticated = require("../Middleware/authMiddleware");
 const cookieParser = require("cookie-parser");
 const ActiveMember = require("../Models/activeMember");
+const bodyParser = require("body-parser");
+
 const multer = require("multer");
-const sharp = require("sharp"); 
+const sharp = require("sharp");
 const { check, validationResult } = require("express-validator");
 
-
+member_router.use(bodyParser.urlencoded({ extended: false }));
 member_router.use(cookieParser());
-member_router.use(express.urlencoded({extended:true}))
-member_router.use(express.json())
+member_router.use(express.urlencoded({ extended: true }));
+member_router.use(express.json());
 
 // Multer configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads'); // Specify the directory where files will be saved
+    cb(null, "uploads"); // Specify the directory where files will be saved
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname); // Use the original filename
@@ -47,13 +49,23 @@ const memberCreationRules = [
   check("gender").trim().notEmpty().withMessage("Gender is required."),
   check("address").trim().notEmpty().withMessage("Address is required."),
   check("state").trim().notEmpty().withMessage("State is required."),
-  check("qualification").trim().notEmpty().withMessage("Qualification is required."),
+  check("qualification")
+    .trim()
+    .notEmpty()
+    .withMessage("Qualification is required."),
   check("tamil").trim().notEmpty().withMessage("Tamil is required."),
-  check("maleMembers").trim().notEmpty().withMessage("Male Members field is required."),
-  check("femaleMembers").trim().notEmpty().withMessage("Female Members field is required."),
-  check("employmentStatus").trim().notEmpty().withMessage("EmploymentStatus is required."),
-  
-  
+  check("maleMembers")
+    .trim()
+    .notEmpty()
+    .withMessage("Male Members field is required."),
+  check("femaleMembers")
+    .trim()
+    .notEmpty()
+    .withMessage("Female Members field is required."),
+  check("employmentStatus")
+    .trim()
+    .notEmpty()
+    .withMessage("EmploymentStatus is required."),
 
   // Custom validation for email and phone uniqueness
   check("email").custom(async (email) => {
@@ -80,42 +92,91 @@ const memberCreationRules = [
   }),
 ];
 
-// Your route handler
-member_router.post('/member', upload.single('file'),memberCreationRules,  async (req, res) => {
-  try {
-    validationResult(req).throw(); // Validate request body
-    const {
-      name, email, sonof, dob, pob, gender, address,
-      phone, state, qualification, tamil, maleMembers,
-      femaleMembers, employmentStatus,
-    } = req.body;
-// console.log(req.file)
-    // Process the image using Sharp
-    const buffer = await sharp(req.file.buffer).png({quality:50}).toBuffer();
-    
-    // Create a new member in your database
-    const newMember = await Member.create({
-      name, email, sonof, dob, pob, gender, address,
-      phone, state, qualification, tamil, maleMembers,
-      femaleMembers, employmentStatus, image:buffer,
-    });
+member_router.post("/member", upload.single("file"), async (req, res) => {
+  console.log(req.body);
 
-    res.status(200).json({ message: "New member added to the database" });
-  } catch (err) {
-    console.error("Error during member creation:", err);
-    res.status(400).json({ error: err.message });
+  const {
+    name,
+    email,
+    sonof,
+    dob,
+    pob,
+    gender,
+    address,
+    phone,
+    state,
+    qualification,
+    tamil,
+    employmentStatus,
+    whatsapp,
+    familyMembers,
+    rws,
+    intrested,
+  } = req.body;
+  const existingMember = await Member.findOne({ email });
+  if (existingMember) {
+   return res.status(409).json({ message: "There is an existing email" });
   }
-}
-);
+  const buffer = await sharp(req.file.buffer).png({ quality: 100 }).toBuffer();
+
+  // Create a new member in your database
+  const newMember = await Member.create({
+    name,
+    email,
+    sonof,
+    dob,
+    pob,
+    gender,
+    address,
+    phone,
+    state,
+    qualification,
+    tamil,
+    familyMembers,
+    employmentStatus,
+    image: buffer,
+    whatsAppNumber: whatsapp,
+    rws,
+    intrested,
+  });
+  console.log(newMember);
+  res.json({ message: "success" });
+});
+
+// Your route handler
+// member_router.post('/member', upload.single('file'),memberCreationRules,  async (req, res) => {
+//   try {
+//     validationResult(req).throw(); // Validate request body
+//     const {
+//       name, email, sonof, dob, pob, gender, address,
+//       phone, state, qualification, tamil, maleMembers,
+//       femaleMembers, employmentStatus,
+//     } = req.body;
+
+//     // Process the image using Sharp
+//     const buffer = await sharp(req.file.buffer).png({quality:100}).toBuffer();
+
+//     // Create a new member in your database
+//     const newMember = await Member.create({
+//       name, email, sonof, dob, pob, gender, address,
+//       phone, state, qualification, tamil, maleMembers,
+//       femaleMembers, employmentStatus, image:buffer,
+//     });
+
+//     res.status(200).json({ message: "New member added to the database" });
+//   }catch (err) {
+//     // console.error("Error during member creation:", err);
+//     res.status(400).json({ err });
+//   }
+
+// }
+// );
 
 // sending all the member application details
 member_router.get("/member", isAuthenticated, async (req, res) => {
   const allMembers = await Member.find();
   res.status(200).json(allMembers);
 });
-
-
-
 
 //sending only the details of specific id
 member_router.get("/member/:id", isAuthenticated, async (req, res) => {
@@ -125,9 +186,6 @@ member_router.get("/member/:id", isAuthenticated, async (req, res) => {
   res.status(200).json(member);
 });
 
-
-
-
 //Deleting Member from the Application List
 member_router.delete("/member/:id", isAuthenticated, async (req, res) => {
   const { id } = req.params;
@@ -136,9 +194,6 @@ member_router.delete("/member/:id", isAuthenticated, async (req, res) => {
   res.status(200).json({ message: "user deleted" });
 });
 
-
-
-
 //Approving Member to Join the Sangam
 member_router.post(
   "/member/:id/activeMember",
@@ -146,6 +201,7 @@ member_router.post(
   async (req, res) => {
     const { id } = req.params;
     const foundMember = await Member.findOne({ _id: id });
+    console.log(foundMember);
     const foundMemberObj = foundMember.toObject();
     if (foundMember) {
       const checkExisting = await ActiveMember.findOne({
@@ -157,9 +213,10 @@ member_router.post(
         // console.log("existing",checkExisting)
         return res
           .status(500)
-          .json({ message: "Member already exists in the Active members list" });
+          .json({
+            message: "Member already exists in the Active members list",
+          });
       } else {
-        
         delete foundMemberObj._id;
         delete foundMemberObj.__v;
         const addMember = await ActiveMember.create(foundMemberObj);
@@ -169,8 +226,5 @@ member_router.post(
     }
   }
 );
-
-
-
 
 module.exports = member_router;

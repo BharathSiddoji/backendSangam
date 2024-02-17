@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const activeMemberSchema = mongoose.Schema({
+  image:{
+    type:Buffer,
+    required:true
+  },
   name: {
     type: String,
     required: [true, "name is required"],
@@ -8,6 +12,10 @@ const activeMemberSchema = mongoose.Schema({
   phone: {
     type: String,
     required: [true, "Phone number is required"],
+  },
+  whatsAppNumber:{
+    type:String,
+    required:true
   },
   email: {
     type: String,
@@ -45,24 +53,22 @@ const activeMemberSchema = mongoose.Schema({
     type: String,
     required: [true, "Do you know tamil field is required"],
   },
-  maleMembers: {
-    type: String,
-    required: [true, "numbers of males in your family is required"],
-  },
-  femaleMembers: {
-    type: String,
-    required: [true, "numbers of female in your family is required"],
+  rws:[],
+  intrested:{
+    type:String,
   },
   employmentStatus: {
     type: String,
     required: [true, "Employement status is requird"],
   },
-  approvedOn: {
+  familyMembers:[{}],
+  createdAt: {
     type: Date,
     default: new Date(),
   },
 },
 { versionKey: false });
+
 
 
 const ActiveMember = mongoose.model("ActiveMember",activeMemberSchema)

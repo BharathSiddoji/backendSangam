@@ -13,6 +13,10 @@ const membershipSchema = mongoose.Schema({
     type: String,
     required: [true, "Phone number is required"],
   },
+  whatsAppNumber:{
+    type:String,
+    required:true
+  },
   email: {
     type: String,
     required: [true, "email address is required"],
@@ -49,18 +53,15 @@ const membershipSchema = mongoose.Schema({
     type: String,
     required: [true, "Do you know tamil field is required"],
   },
-  maleMembers: {
-    type: String,
-    required: [true, "numbers of males in your family is required"],
-  },
-  femaleMembers: {
-    type: String,
-    required: [true, "numbers of female in your family is required"],
+  rws:[],
+  intrested:{
+    type:String,
   },
   employmentStatus: {
     type: String,
     required: [true, "Employement status is requird"],
   },
+  familyMembers:[{}],
   createdAt: {
     type: Date,
     default: new Date(),
