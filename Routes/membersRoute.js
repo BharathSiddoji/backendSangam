@@ -139,38 +139,10 @@ member_router.post("/member", upload.single("file"), async (req, res) => {
     rws,
     intrested,
   });
-  console.log(newMember);
   res.json({ message: "success" });
 });
 
-// Your route handler
-// member_router.post('/member', upload.single('file'),memberCreationRules,  async (req, res) => {
-//   try {
-//     validationResult(req).throw(); // Validate request body
-//     const {
-//       name, email, sonof, dob, pob, gender, address,
-//       phone, state, qualification, tamil, maleMembers,
-//       femaleMembers, employmentStatus,
-//     } = req.body;
 
-//     // Process the image using Sharp
-//     const buffer = await sharp(req.file.buffer).png({quality:100}).toBuffer();
-
-//     // Create a new member in your database
-//     const newMember = await Member.create({
-//       name, email, sonof, dob, pob, gender, address,
-//       phone, state, qualification, tamil, maleMembers,
-//       femaleMembers, employmentStatus, image:buffer,
-//     });
-
-//     res.status(200).json({ message: "New member added to the database" });
-//   }catch (err) {
-//     // console.error("Error during member creation:", err);
-//     res.status(400).json({ err });
-//   }
-
-// }
-// );
 
 // sending all the member application details
 member_router.get("/member", isAuthenticated, async (req, res) => {
