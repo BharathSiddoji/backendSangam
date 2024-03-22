@@ -17,10 +17,11 @@ mongoose.connect(MONGO_URI).then(() => {
 });
 app.use(
   cors({
-    origin: ["http://localhost:5173","https://tttsangam.in","https://tttsangam.com"],
+    origin: "https://tttsangam.in",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
     exposedHeaders: ["set-cookie"],
+    optionsSuccessStatus: 200
   })
 );
 app.use(express.json());
