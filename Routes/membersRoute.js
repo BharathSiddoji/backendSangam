@@ -93,7 +93,6 @@ const memberCreationRules = [
 ];
 
 member_router.post("/member", upload.single("file"), async (req, res) => {
-  console.log(req.body);
 
   const {
     name,
@@ -112,6 +111,7 @@ member_router.post("/member", upload.single("file"), async (req, res) => {
     familyMembers,
     rws,
     intrested,
+    headOfTheFamily
   } = req.body;
   const existingMember = await Member.findOne({ email });
   if (existingMember) {
@@ -138,6 +138,7 @@ member_router.post("/member", upload.single("file"), async (req, res) => {
     whatsAppNumber: whatsapp,
     rws,
     intrested,
+    headOfTheFamily
   });
   res.json({ message: "success" });
 });
@@ -153,7 +154,6 @@ member_router.get("/member", isAuthenticated, async (req, res) => {
 //sending only the details of specific id
 member_router.get("/member/:id", isAuthenticated, async (req, res) => {
   const { id } = req.params;
-  // console.log(id)
   const member = await Member.findOne({ _id: id });
   res.status(200).json(member);
 });
@@ -162,7 +162,6 @@ member_router.get("/member/:id", isAuthenticated, async (req, res) => {
 member_router.delete("/member/:id", isAuthenticated, async (req, res) => {
   const { id } = req.params;
   const deleted = await Member.findOneAndDelete({ _id: id });
-  // console.log(deleted)
   res.status(200).json({ message: "user deleted" });
 });
 
@@ -173,7 +172,6 @@ member_router.post(
   async (req, res) => {
     const { id } = req.params;
     const foundMember = await Member.findOne({ _id: id });
-    console.log(foundMember);
     const foundMemberObj = foundMember.toObject();
     if (foundMember) {
       const checkExisting = await ActiveMember.findOne({
@@ -182,7 +180,6 @@ member_router.post(
       });
 
       if (checkExisting) {
-        // console.log("existing",checkExisting)
         return res
           .status(500)
           .json({
@@ -192,7 +189,6 @@ member_router.post(
         delete foundMemberObj._id;
         delete foundMemberObj.__v;
         const addMember = await ActiveMember.create(foundMemberObj);
-        // console.log(addMember);
         return res.status(200).json({ message: "add member" });
       }
     }

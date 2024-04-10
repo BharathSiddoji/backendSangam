@@ -25,6 +25,9 @@ const activeMemberSchema = mongoose.Schema({
     type: String,
     required: [true, "father name is required"],
   },
+  headOfTheFamily:{
+    type:String
+  },
   dob: {
     type: String,
     required: [true, "Date of birth is required"],

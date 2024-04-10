@@ -29,4 +29,4 @@ activeMembers_router.delete('/activeMembers/:id',isAuthenticated,async(req,res)=
     res.status(200).json({message:"no id Provided"})
 })
 
-module.exports = activeMembers_router
+module.exports = activeMembers_router;

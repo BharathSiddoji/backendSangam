@@ -15,15 +15,13 @@ mongoose.connect(MONGO_URI).then(() => {
     console.log(`on localhost:8000`, `connected to db`);
   });
 });
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-    exposedHeaders: ["set-cookie"],
-    optionsSuccessStatus: 200
-  })
-);
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+  exposedHeaders: ["set-cookie"],
+  optionsSuccessStatus: 200
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
