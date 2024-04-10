@@ -16,7 +16,7 @@ mongoose.connect(MONGO_URI).then(() => {
   });
 });
 app.use(cors({
-  origin: "*",
+  origin: ["https://final-aya5.onrender.com/"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
   exposedHeaders: ["set-cookie"],
